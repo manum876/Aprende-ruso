@@ -33,12 +33,15 @@ button{font-family:inherit;cursor:pointer;}
 /* OVERLAY + DRAWER */
 #overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s;}
 #overlay.show{opacity:1;pointer-events:all;}
-#drawer{position:fixed;left:0;top:0;bottom:0;width:290px;z-index:210;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);padding-bottom:var(--nav-h);}
+#drawer{position:fixed;left:0;top:0;bottom:0;width:290px;z-index:210;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .28s cubic-bezier(.4,0,.2,1);}
 #drawer.open{transform:translateX(0);}
 #drawer .dh{padding:18px 16px 14px;border-bottom:1px solid var(--border);}
 #toHomeBtn{display:flex;align-items:center;gap:8px;background:none;border:1px solid var(--border);border-radius:10px;padding:10px 16px;color:var(--text);font-size:14.5px;width:100%;text-align:left;}
 #toHomeBtn:hover{border-color:var(--gold);color:var(--gold);}
 #drawerUnits{flex:1;overflow-y:auto;padding:10px 8px;}
+#drawerFoot{padding:12px 16px calc(var(--nav-h) + 12px);border-top:1px solid var(--border);}
+#themeBtnDrawer{display:flex;align-items:center;gap:8px;background:none;border:1px solid var(--border);border-radius:10px;padding:10px 16px;color:var(--text);font-size:14.5px;width:100%;text-align:left;}
+#themeBtnDrawer:hover{border-color:var(--gold);color:var(--gold);}
 .d-lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:10px 10px 6px;}
 .d-u{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:10px;background:none;border:none;color:var(--sub);font-size:13.5px;text-align:left;width:100%;}
 .d-u:hover:not(.lk){background:var(--bg3);color:var(--text);}
@@ -227,6 +230,7 @@ p.ps{color:var(--sub);font-size:14.5px;margin-bottom:20px;max-width:560px;line-h
 <div id="drawer">
   <div class="dh"><button id="toHomeBtn">← Inicio</button></div>
   <div id="drawerUnits"></div>
+  <div id="drawerFoot"><button id="themeBtnDrawer">☾ Modo claro / oscuro</button></div>
 </div>
 
 <div id="content">
@@ -235,7 +239,6 @@ p.ps{color:var(--sub);font-size:14.5px;margin-bottom:20px;max-width:560px;line-h
       <div class="ey">Ruso desde cero · A1 → B1</div>
       <h1 class="pt">Твой курс русского</h1>
       <p class="ps">12 unidades pensadas para un mes cada una. Empezá por el alfabeto: todo lo demás se construye sobre esto.</p>
-      <div class="sr" id="homeStats"></div>
       <div class="ugrid" id="unitsGrid"></div>
     </div>
   </section>
@@ -1609,7 +1612,18 @@ function toast(msg){
 }
 
 // ── THEME ────────────────────────────────────────
-function toggleTheme(){document.body.classList.toggle('light');ss('theme',document.body.classList.contains('light')?'light':'dark');}
+function toggleTheme(){
+  document.body.classList.toggle('light');
+  const isLight=document.body.classList.contains('light');
+  ss('theme',isLight?'light':'dark');
+  updateThemeBtn();
+}
+function updateThemeBtn(){
+  const btn=document.getElementById('themeBtnDrawer');
+  if(!btn)return;
+  const isLight=document.body.classList.contains('light');
+  btn.textContent=isLight?'☀ Modo oscuro':'☾ Modo claro';
+}
 
 // ── NAVIGATION ───────────────────────────────────
 function navTo(view,sec,push){
@@ -1657,7 +1671,7 @@ function updateNav(){
     pb.disabled=true;nb2.disabled=true;
   } else if(CURR_VIEW==='unit1'){
     const s=U1S[CURR_SEC];
-    mid.innerHTML=`<b>${s.ic} ${s.lbl}</b><span>Unidad 1 · ${CURR_SEC+1}/${U1S.length}</span>`;
+    mid.innerHTML=`<b>${s.ic} ${s.lbl}</b><span>Unidad 1</span>`;
     pb.disabled=false;nb2.disabled=false;
     // update tabs
     renderU1Tabs();
@@ -1666,6 +1680,7 @@ function updateNav(){
 document.getElementById('overlay').addEventListener('click',closeDrawer);
 document.getElementById('menuBtn').addEventListener('click',openDrawer);
 document.getElementById('toHomeBtn').addEventListener('click',()=>{closeDrawer();navTo('home');});
+document.getElementById('themeBtnDrawer').addEventListener('click',toggleTheme);
 document.getElementById('prevBtn').addEventListener('click',()=>{
   if(CURR_VIEW==='unit1'){
     if(CURR_SEC===0)navTo('home');
@@ -1684,16 +1699,6 @@ function dominated(){return Object.values(ALFA_PROG).filter(v=>v===2).length;}
 function u1Pct(){return Math.round(dominated()/33*100);}
 
 function renderHome(){
-  const stats=document.getElementById('homeStats');
-  if(!stats)return;
-  stats.innerHTML='';
-  [{v:PROG.xp,l:'XP'},{v:PROG.streak+'🔥',l:'Racha'},{v:dominated()+'/33',l:'Letras'},{v:PROG.exDone,l:'Ejercicios'},{v:fmtTime(PROG.timeSec),l:'Tiempo'}].forEach(x=>{
-    const d=document.createElement('div');d.className='sc';
-    d.innerHTML=`<div class="sv">${x.v}</div><div class="sl">${x.l}</div>`;
-    stats.appendChild(d);
-  });
-  const tb=document.createElement('button');tb.className='btn gh';tb.textContent='☾';tb.style.marginLeft='auto';
-  tb.addEventListener('click',toggleTheme);stats.appendChild(tb);
 
   const grid=document.getElementById('unitsGrid');
   if(!grid)return;
@@ -2202,6 +2207,7 @@ function renderEvaluacion(el){
 async function init(){
   const theme=await sg('theme','dark');
   if(theme==='light')document.body.classList.add('light');
+  updateThemeBtn();
   PROG=await sg('prog',{xp:0,streak:0,lastDate:null,exDone:0,timeSec:0,studyDays:[]});
   ALFA_PROG=await sg('alfaProg',{});
   NB=await sg('notebook',{favs:[],notes:[]});
