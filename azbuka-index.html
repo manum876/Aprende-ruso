@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Азбука">
+<title>Азбука — Ruso desde cero</title>
+<style>
+  :root{
+    --bg:#0F0F14;--bg2:#17171E;--bg3:#1E1E28;
+    --card:#1A1A24;--border:#2A2A38;
+    --gold:#C9A84C;--goldD:#C9A84C33;
+    --text:#F0EEE8;--muted:#888080;--sub:#B8B0A8;
+    --r:14px;
+    --sans:-apple-system,"Inter","Helvetica Neue",Arial,sans-serif;
+    --serif:-apple-system,"Inter","Helvetica Neue",Arial,sans-serif;
+  }
+  body.light{
+    --bg:#F7F5F0;--bg2:#EDEAE4;--bg3:#E2DED7;
+    --card:#FFFFFF;--border:#D5D0C8;
+    --text:#1A1812;--muted:#8A847A;--sub:#5A5450;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    min-height:100vh;
+    padding-bottom:calc(30px + env(safe-area-inset-bottom));
+    transition:background .2s ease, color .2s ease;
+  }
+  header{
+    padding:calc(28px + env(safe-area-inset-top)) 20px 18px;
+    position:relative;
+    max-width:700px;
+    margin:0 auto;
+  }
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:14px;
+  }
+  .back-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:none;
+    border:none;
+    color:var(--muted);
+    font-family:inherit;
+    font-size:13.5px;
+    text-decoration:none;
+    padding:0;
+  }
+  .back-btn:hover{color:var(--gold);}
+  .theme-btn{
+    width:38px;
+    height:38px;
+    border-radius:10px;
+    background:var(--card);
+    border:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:17px;
+    cursor:pointer;
+    color:var(--text);
+  }
+  .theme-btn:active{background:var(--bg3);}
+  .ey{
+    font-size:10.5px;
+    letter-spacing:1.8px;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:7px;
+    font-weight:600;
+  }
+  h1{
+    font-family:var(--serif);
+    font-size:26px;
+    margin-bottom:6px;
+  }
+  header p{
+    color:var(--sub);
+    font-size:14px;
+    line-height:1.6;
+    max-width:520px;
+  }
+  main{
+    max-width:700px;
+    margin:0 auto;
+    padding:8px 16px 20px;
+  }
+  .ugrid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+    gap:12px;
+  }
+  @media(max-width:560px){.ugrid{grid-template-columns:1fr 1fr;}}
+  .uc{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--r);
+    padding:16px;
+    position:relative;
+    overflow:hidden;
+    text-decoration:none;
+    color:var(--text);
+    display:block;
+    transition:.2s;
+  }
+  a.uc:hover{border-color:var(--gold); transform:translateY(-2px);}
+  .uc.lk{opacity:.42; cursor:default;}
+  .un{
+    font-family:var(--serif);
+    font-size:34px;
+    color:var(--border);
+    position:absolute;
+    right:7px;
+    top:0;
+    line-height:1;
+    user-select:none;
+  }
+  .ut{font-weight:600; font-size:14px; margin:20px 0 3px; max-width:80%;}
+  .ud{font-size:12px; color:var(--muted); margin-bottom:10px; min-height:26px;}
+  .lockLbl{font-size:12px; color:var(--muted);}
+  .goLbl{font-size:11.5px; color:var(--gold); font-weight:600;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="topbar">
+    <a class="back-btn" href="index.html">← Volver</a>
+    <button class="theme-btn" id="themeBtn" aria-label="Cambiar tema">🌙</button>
+  </div>
+  <div class="ey">Ruso desde cero · A1 → B1</div>
+  <h1>Твой курс русского</h1>
+  <p>12 unidades pensadas para un mes cada una. Empezá por el alfabeto: todo lo demás se construye sobre esto.</p>
+</header>
+
+<main>
+  <div class="ugrid">
+    <a class="uc" href="azbuka-1.html">
+      <div class="un">01</div>
+      <div class="ut">Alfabeto y pronunciación</div>
+      <div class="ud">Las 33 letras, sonidos y primeras palabras.</div>
+      <span class="goLbl">Empezar →</span>
+    </a>
+
+    <a class="uc" href="azbuka-2.html">
+      <div class="un">02</div>
+      <div class="ut">Presentaciones básicas</div>
+      <div class="ud">Saludos, nombres, primeras frases.</div>
+      <span class="goLbl">Empezar →</span>
+    </a>
+
+    <a class="uc" href="azbuka-3.html">
+      <div class="un">03</div>
+      <div class="ut">Sustantivos y género</div>
+      <div class="ud">Masculino, femenino, neutro.</div>
+      <span class="goLbl">Empezar →</span>
+    </a>
+
+    <a class="uc" href="azbuka-4.html">
+      <div class="un">04</div>
+      <div class="ut">Casos básicos</div>
+      <div class="ud">Nominativo y acusativo.</div>
+      <span class="goLbl">Empezar →</span>
+    </a>
+
+    <a class="uc" href="azbuka-5.html">
+      <div class="un">05</div>
+      <div class="ut">Verbos en presente</div>
+      <div class="ud">Conjugación y uso cotidiano.</div>
+      <span class="goLbl">Empezar →</span>
+    </a>
+
+    <a class="uc" href="azbuka-6.html">
+      <div class="un">06</div>
+      <div class="ut">Movimiento y ubicación</div>
+      <div class="ud">Verbos de movimiento, preposiciones.</div>
+      <span class="goLbl">Empezar →</span>
+    </a>
+
+    <a class="uc" href="azbuka-7.html">
+      <div class="un">07</div>
+      <div class="ut">Tiempo y rutina diaria</div>
+      <div class="ud">Horas, días, rutinas.</div>
+      <span class="goLbl">Empezar →</span>
+    </a>
+
+    <a class="uc" href="azbuka-8.html">
+      <div class="un">08</div>
+      <div class="ut">Pasado</div>
+      <div class="ud">Aspecto verbal y pasado.</div>
+      <span class="goLbl">Empezar →</span>
+    </a>
+
+    <a class="uc" href="azbuka-9.html">
+      <div class="un">09</div>
+      <div class="ut">Futuro</div>
+      <div class="ud">Formas y uso del futuro.</div>
+      <span class="goLbl">Empezar →</span>
+    </a>
+
+    <a class="uc" href="azbuka-10.html">
+      <div class="un">10</div>
+      <div class="ut">Casos restantes</div>
+      <div class="ud">Genitivo, dativo, instrumental.</div>
+      <span class="goLbl">Empezar →</span>
+    </a>
+
+    <a class="uc" href="azbuka-11.html">
+      <div class="un">11</div>
+      <div class="ut">Conversaciones cotidianas</div>
+      <div class="ud">Diálogos extendidos, situaciones reales.</div>
+      <span class="goLbl">Empezar →</span>
+    </a>
+
+    <a class="uc" href="azbuka-12.html">
+      <div class="un">12</div>
+      <div class="ut">Consolidación B1</div>
+      <div class="ud">Repaso integral y examen final.</div>
+      <span class="goLbl">Empezar →</span>
+    </a>
+  </div>
+</main>
+
+<script>
+  const btn = document.getElementById('themeBtn');
+  function applyTheme(t){
+    document.body.classList.toggle('light', t === 'light');
+    btn.textContent = t === 'light' ? '☀️' : '🌙';
+  }
+  applyTheme(localStorage.getItem('theme') || 'dark');
+  btn.addEventListener('click', () => {
+    const next = document.body.classList.contains('light') ? 'dark' : 'light';
+    localStorage.setItem('theme', next);
+    applyTheme(next);
+  });
+</script>
+
+</body>
+</html>
