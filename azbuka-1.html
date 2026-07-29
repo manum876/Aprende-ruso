@@ -239,15 +239,7 @@ p.ps{color:var(--sub);font-size:14.5px;margin-bottom:20px;max-width:560px;line-h
 </div>
 
 <div id="content">
-  <section class="view" id="view-home">
-    <div class="inner">
-      <div class="ey">Ruso desde cero · A1 → B1</div>
-      <h1 class="pt">Твой курс русского</h1>
-      <p class="ps">12 unidades pensadas para un mes cada una. Empezá por el alfabeto: todo lo demás se construye sobre esto.</p>
-      <div class="ugrid" id="unitsGrid"></div>
-    </div>
-  </section>
-  <section class="view" id="view-unit1">
+  <section class="view active" id="view-unit1">
     <div class="inner">
       <div id="u1Header"></div>
       <div class="u1tabs" id="pips"></div>
@@ -1511,17 +1503,17 @@ async function ss(k,v){try{await window.storage.set(k,JSON.stringify(v),false);}
 // ── UNITS DATA ───────────────────────────────────
 const UNITS=[
   {id:1,title:"Alfabeto y pronunciación",desc:"Las 33 letras, sonidos y primeras palabras.",locked:false},
-  {id:2,title:"Presentaciones básicas",desc:"Saludos, nombres, primeras frases.",locked:true},
-  {id:3,title:"Sustantivos y género",desc:"Masculino, femenino, neutro.",locked:true},
-  {id:4,title:"Casos básicos",desc:"Nominativo y acusativo.",locked:true},
-  {id:5,title:"Verbos en presente",desc:"Conjugación y uso cotidiano.",locked:true},
-  {id:6,title:"Movimiento y ubicación",desc:"Verbos de movimiento, preposiciones.",locked:true},
-  {id:7,title:"Tiempo y rutina diaria",desc:"Horas, días, rutinas.",locked:true},
-  {id:8,title:"Pasado",desc:"Aspecto verbal y pasado.",locked:true},
-  {id:9,title:"Futuro",desc:"Formas y uso del futuro.",locked:true},
-  {id:10,title:"Casos restantes",desc:"Genitivo, dativo, instrumental.",locked:true},
-  {id:11,title:"Conversaciones cotidianas",desc:"Diálogos extendidos, situaciones reales.",locked:true},
-  {id:12,title:"Consolidación B1",desc:"Repaso integral y examen final.",locked:true},
+  {id:2,title:"Presentaciones básicas",desc:"Saludos, nombres, primeras frases.",locked:false},
+  {id:3,title:"Sustantivos y género",desc:"Masculino, femenino, neutro.",locked:false},
+  {id:4,title:"Casos básicos",desc:"Nominativo y acusativo.",locked:false},
+  {id:5,title:"Verbos en presente",desc:"Conjugación y uso cotidiano.",locked:false},
+  {id:6,title:"Movimiento y ubicación",desc:"Verbos de movimiento, preposiciones.",locked:false},
+  {id:7,title:"Tiempo y rutina diaria",desc:"Horas, días, rutinas.",locked:false},
+  {id:8,title:"Pasado",desc:"Aspecto verbal y pasado.",locked:false},
+  {id:9,title:"Futuro",desc:"Formas y uso del futuro.",locked:false},
+  {id:10,title:"Casos restantes",desc:"Genitivo, dativo, instrumental.",locked:false},
+  {id:11,title:"Conversaciones cotidianas",desc:"Diálogos extendidos, situaciones reales.",locked:false},
+  {id:12,title:"Consolidación B1",desc:"Repaso integral y examen final.",locked:false},
 ];
 const U1S=[
   {id:'intro',    lbl:'Intro',       ic:'📖'},
@@ -1553,7 +1545,7 @@ const DIALOGUES=[
 let PROG={xp:0,streak:0,lastDate:null,exDone:0,timeSec:0,studyDays:[]};
 let ALFA_PROG={};
 let NB={favs:[],notes:[]};
-let CURR_VIEW='home';
+let CURR_VIEW='unit1';
 let CURR_SEC=0;
 
 // Alfabeto section sub-state
@@ -1635,18 +1627,14 @@ function navTo(view,sec,push){
   if(push===undefined)push=true;
   CURR_VIEW=view;
   if(sec!==undefined)CURR_SEC=sec;
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  const el=document.getElementById('view-'+view);
-  if(el)el.classList.add('active');
   if(push)history.pushState({view,sec:CURR_SEC},'','');
-  if(view==='home')renderHome();
-  else if(view==='unit1')renderU1();
+  renderU1();
   updateNav();
   window.scrollTo({top:0,behavior:'instant'});
 }
 window.addEventListener('popstate',e=>{
   if(e.state)navTo(e.state.view,e.state.sec,false);
-  else navTo('home',0,false);
+  else navTo('unit1',0,false);
 });
 
 // ── DRAWER ───────────────────────────────────────
@@ -1658,76 +1646,45 @@ function renderDrawer(){
   const el=document.getElementById('drawerUnits');
   el.innerHTML='<div class="d-lbl">Unidades del curso</div>';
   UNITS.forEach(u=>{
-    const ac=CURR_VIEW==='unit1'&&u.id===1;
+    const ac=u.id===1; // este archivo es azbuka-1.html
     const btn=document.createElement('button');
     btn.className='d-u'+(u.locked?' lk':'')+(ac?' ac':'');
     btn.innerHTML=`<span class="d-n">${String(u.id).padStart(2,'0')}</span><span>${u.locked?'🔒 ':''}${u.title}</span>`;
-    if(!u.locked){
-      if(u.id===1) btn.addEventListener('click',()=>{closeDrawer();navTo('unit1',0);});
-      else btn.addEventListener('click',()=>{window.location.href=unitHref(u);});
-    }
+    if(!u.locked)btn.addEventListener('click',()=>{window.location.href=unitHref(u);});
     el.appendChild(btn);
   });
 }
 
 // ── BOTTOM NAV ───────────────────────────────────
+const INDEX_HREF='azbuka-index.html';
 function updateNav(){
   renderDrawer();
   const mid=document.getElementById('navMid');
   const pb=document.getElementById('prevBtn');
   const nb2=document.getElementById('nextBtn');
-  if(CURR_VIEW==='home'){
-    mid.innerHTML='<b>Ruso desde cero</b><span></span>';
-    pb.disabled=true;nb2.disabled=true;
-  } else if(CURR_VIEW==='unit1'){
-    const s=U1S[CURR_SEC];
-    mid.innerHTML=`<b>${s.ic} ${s.lbl}</b><span>Unidad 1</span>`;
-    pb.disabled=false;nb2.disabled=false;
-    // update tabs
-    renderU1Tabs();
-  }
+  const s=U1S[CURR_SEC];
+  mid.innerHTML=`<b>${s.ic} ${s.lbl}</b><span>Unidad 1</span>`;
+  pb.disabled=false;nb2.disabled=false;
+  renderU1Tabs();
 }
 document.getElementById('overlay').addEventListener('click',closeDrawer);
 document.getElementById('menuBtn').addEventListener('click',openDrawer);
-document.getElementById('toHomeBtn').addEventListener('click',()=>{closeDrawer();navTo('home');});
-document.getElementById('homeBtnDrawer').addEventListener('click',()=>{closeDrawer();navTo('home');});
+document.getElementById('toHomeBtn').addEventListener('click',()=>{window.location.href=INDEX_HREF;});
+document.getElementById('homeBtnDrawer').addEventListener('click',()=>{window.location.href=INDEX_HREF;});
 document.getElementById('themeBtnDrawer').addEventListener('click',toggleTheme);
 document.getElementById('prevBtn').addEventListener('click',()=>{
-  if(CURR_VIEW==='unit1'){
-    if(CURR_SEC===0)navTo('home');
-    else navTo('unit1',CURR_SEC-1);
-  }
+  if(CURR_SEC===0)window.location.href=INDEX_HREF;
+  else navTo('unit1',CURR_SEC-1);
 });
 document.getElementById('nextBtn').addEventListener('click',()=>{
-  if(CURR_VIEW==='unit1'){
-    if(CURR_SEC<U1S.length-1)navTo('unit1',CURR_SEC+1);
-    else toast('¡Llegaste al final de la Unidad 1! 🎉');
-  }
+  if(CURR_SEC<U1S.length-1)navTo('unit1',CURR_SEC+1);
+  else toast('¡Llegaste al final de la Unidad 1! 🎉');
 });
+
 
 // ── HOME ─────────────────────────────────────────
 function dominated(){return Object.values(ALFA_PROG).filter(v=>v===2).length;}
 function u1Pct(){return Math.round(dominated()/33*100);}
-
-function renderHome(){
-
-  const grid=document.getElementById('unitsGrid');
-  if(!grid)return;
-  grid.innerHTML='';
-  UNITS.forEach(u=>{
-    const pct=u.id===1?u1Pct():0;
-    const d=document.createElement('div');d.className='uc'+(u.locked?' lk':'');
-    d.innerHTML=`<div class="un">${String(u.id).padStart(2,'0')}</div>
-      <div class="ut">${u.title}</div><div class="ud">${u.desc}</div>
-      ${u.locked?`<span style="font-size:12px;color:var(--muted)">🔒 Próximamente</span>`:
-      `<div class="pb"><div style="width:${pct}%"></div></div><div class="upc">${pct}% completado</div>`}`;
-    if(!u.locked){
-      if(u.id===1) d.addEventListener('click',()=>navTo('unit1',0));
-      else d.addEventListener('click',()=>{window.location.href=unitHref(u);});
-    }
-    grid.appendChild(d);
-  });
-}
 
 function renderU1Tabs(){
   const el=document.getElementById('pips');
@@ -2225,8 +2182,8 @@ async function init(){
   PROG=await sg('prog',{xp:0,streak:0,lastDate:null,exDone:0,timeSec:0,studyDays:[]});
   ALFA_PROG=await sg('alfaProg',{});
   NB=await sg('notebook',{favs:[],notes:[]});
-  history.replaceState({view:'home',sec:0},'','');
-  navTo('home',0,false);
+  history.replaceState({view:'unit1',sec:0},'','');
+  navTo('unit1',0,false);
 }
 init();
 
